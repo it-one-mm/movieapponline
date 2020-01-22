@@ -122,24 +122,8 @@ public class SeriesPopUp  extends DialogFragment {
 
 
                    }
-                   CollectionReference collectionReference=db.collection("series");
-                   collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                       @Override
-                       public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                           ArrayList<SeriesModel> seriesModels=new ArrayList<SeriesModel>();
-                           SeriesFragment.documentIds.clear();
-                           for(DocumentSnapshot s : queryDocumentSnapshots)
-                           {
-                               seriesModels.add(s.toObject(SeriesModel.class));
-                               SeriesFragment.documentIds.add(s.getId());
-                           }
-                           SeriesRecyclerAdapter adapter=new SeriesRecyclerAdapter(seriesModels,getContext(),getFragmentManager());
-                           SeriesFragment.recyclerView.setAdapter(adapter);
-                           LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getContext(), RecyclerView.VERTICAL,false);
-                           SeriesFragment.recyclerView.setLayoutManager(linearLayoutManager);
-                           SeriesFragment.progressBar.setVisibility(View.GONE);
-                       }
-                   });
+
+                   SeriesFragment.loadData();;
                }
                else
                {

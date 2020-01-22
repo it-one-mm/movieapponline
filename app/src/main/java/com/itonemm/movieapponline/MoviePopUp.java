@@ -86,21 +86,23 @@ public class MoviePopUp extends DialogFragment {
                     SeriesModel seriesModel=snapshot.toObject(SeriesModel.class);
                     seriesnames.add(seriesModel.seriesName);
 
-                    if(movieModel!=null)
-                    {
-                        for(int i=0;i<seriesnames.size();i++)
-                        {
-                            if(seriesnames.get(i).equals(movieModel.movieSeries))
-                            {
-                                sp_series.setSelection(i);
-                                break;
-                            }
-                        }
-                    }
+
                 }
 
                 ArrayAdapter<String> adapter=new ArrayAdapter<String>(getContext(),android.R.layout.simple_dropdown_item_1line,seriesnames);
                 sp_series.setAdapter(adapter);
+
+                if(movieModel!=null)
+                {
+                    for(int i=0;i<seriesnames.size();i++)
+                    {
+                        if(seriesnames.get(i).equals(movieModel.movieSeries))
+                        {
+                            sp_series.setSelection(i);
+                            break;
+                        }
+                    }
+                }
             }
         });
 

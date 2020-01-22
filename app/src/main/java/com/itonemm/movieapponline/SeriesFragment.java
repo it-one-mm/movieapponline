@@ -1,10 +1,12 @@
 package com.itonemm.movieapponline;
 
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,9 +36,11 @@ import java.util.ArrayList;
  */
 public class SeriesFragment extends Fragment {
 
+    static FragmentManager fragmentManager;
     public static ArrayList<String> documentIds=new ArrayList<String>();
      static ProgressBar progressBar;
      static RecyclerView recyclerView;
+     static Context context;
     public SeriesFragment() {
         // Required empty public constructor
     }
@@ -47,7 +51,8 @@ public class SeriesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
        View view= inflater.inflate(R.layout.fragment_series, container, false);
-
+context=getContext();
+fragmentManager=getFragmentManager();
         final EditText edit_series_search=view.findViewById(R.id.edt_search_series);
         edit_series_search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -143,4 +148,26 @@ public class SeriesFragment extends Fragment {
        return view;
     }
 
+    public static  void loadData()
+    {
+        FirebaseFirestore db=FirebaseFirestore.getInstance();
+        CollectionReference collectionReference=db.collection("series");
+        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                ArrayList<SeriesModel> seriesModels=new ArrayList<SeriesModel>();
+                SeriesFragment.documentIds.clear();
+                for(DocumentSnapshot s : queryDocumentSnapshots)
+                {
+                    seriesModels.add(s.toObject(SeriesModel.class));
+                    SeriesFragment.documentIds.add(s.getId());
+                }
+                SeriesRecyclerAdapter adapter=new SeriesRecyclerAdapter(seriesModels,context,fragmentManager);
+                SeriesFragment.recyclerView.setAdapter(adapter);
+                LinearLayoutManager linearLayoutManager=new LinearLayoutManager(context, RecyclerView.VERTICAL,false);
+                SeriesFragment.recyclerView.setLayoutManager(linearLayoutManager);
+                SeriesFragment.progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
 }
